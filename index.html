@@ -113,11 +113,12 @@
       movesEl.textContent = "0";
       messageEl.textContent = "";
 
-      const totalSize = 300; // タイル部分だけの固定サイズ
-      const borderSize = 8;  // 枠線ぶん
-      const tileSize = totalSize / size;
+      const totalSize = 300;    // タイル部分だけ
+      const borderSize = 8;     // 枠線ぶん
+      const gapSize = (size - 1) * 2; // gapぶん（列間＝サイズ-1）
 
-      // 枠込みの外寸を設定
+      const tileSize = (totalSize - gapSize) / size; // gapを引いた残りを分割
+
       puzzle.style.gridTemplateColumns = `repeat(${size}, ${tileSize}px)`;
       puzzle.style.gridTemplateRows = `repeat(${size}, ${tileSize}px)`;
       puzzle.style.width = `${totalSize + borderSize}px`;
@@ -212,6 +213,7 @@
   </script>
 </body>
 </html>
+
 
 
 
