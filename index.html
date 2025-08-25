@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スライドパズル</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #222;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #controls {
+      margin: 10px;
+    }
+
+    #puzzle {
+      display: grid;
+      gap: 2px;
+      margin: 20px 0;
+      background: #444;
+      border: 4px solid #666;
+    }
+
+    .tile {
+      background-image: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPjrLhRe69TZJjGiwaB_qEfk3SLDKTVlDV2yr_vVgZ75tMWx0qa3dV2fHa36hAO-NBfHzs-QzYsQxECl0zTcnQGfgYyPTtd1sXHMEJoMBUF4oSEcC5uJJgfQkOe4hgs7c0aH_QhyphenhyphenpPtrw2MkPBG3FiMkmspkPV77nb-1cmoznS95TUemSiOdYK1-7BJX6i/s1024/Copilot_20250825_095216.png");
+      background-size: cover;
+      cursor: pointer;
+    }
+
+    .empty {
+      background: #222;
+      cursor: default;
+    }
+
+    #status {
+      margin-top: 10px;
+    }
+
+    button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #ff9800;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e68900;
+    }
+
+    select {
+      padding: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>スライドパズル 👻</h1>
+  <div id="controls">
+    <label>難易度：
+      <select id="sizeSelect">
+        <option value="3">3×3</option>
+        <option value="4">4×4</option>
+        <option value="5">5×5</option>
+      </select>
+    </label>
+    <button onclick="startGame()">リセット</button>
+  </div>
+
+  <div id="puzzle"></div>
+
+  <div id="status">
+    <p>⏱ タイム: <span id="timer">0</span> 秒</p>
+    <p>🌀 手数: <span id="moves">0</span></p>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    let size = 3;
+    let tiles = [];
+    let emptyIndex;
+    let timer = 0;
+    let moves = 0;
+    let timerInterval;
+
+    const puzzle = document.getElementById("puzzle");
+    const timerEl = document.getElementById("timer");
+    const movesEl = document.getElementById("moves");
+    const messageEl = document.getElementById("message");
+
+    document.getElementById("sizeSelect").addEventListener("change", (e) => {
+      size = parseInt(e.target.value);
+      startGame();
+    });
+
+    function startGame() {
+      clearInterval(timerInterval);
+      timer = 0;
+      moves = 0;
+      timerEl.textContent = "0";
+      movesEl.textContent = "0";
+      messageEl.textContent = "";
+
+      puzzle.style.gridTemplateColumns = `repeat(${size}, 100px)`;
+      puzzle.style.gridTemplateRows = `repeat(${size}, 100px)`;
+      puzzle.style.width = `${size * 100}px`;
+      puzzle.style.height = `${size * 100}px`;
+
+      tiles = [];
+      for (let i = 0; i < size * size; i++) {
+        tiles.push(i);
+      }
+
+      // シャッフル
+      tiles = shuffleArray(tiles);
+
+      // 最後を空白に
+      emptyIndex = tiles.indexOf(size * size - 1);
+
+      render();
+
+      timerInterval = setInterval(() => {
+        timer++;
+        timerEl.textContent = timer;
+      }, 1000);
+    }
+
+    function render() {
+      puzzle.innerHTML = "";
+      tiles.forEach((n, i) => {
+        const div = document.createElement("div");
+        div.classList.add("tile");
+
+        // タイルの表示サイズ（既存の設計に合わせて100px）
+        div.style.width = "100px";
+        div.style.height = "100px";
+
+        // ▼▼▼ ここを追加（パズル全体の大きさ＝ size*100 px に背景画像を拡大・縮小）
+        div.style.backgroundSize = `${size * 100}px ${size * 100}px`;
+        // ▲▲▲ ここまで追加
+
+        if (n === size * size - 1) {
+          // 空白タイル
+          div.classList.add("empty");
+        } else {
+          // 画像の切り出し位置を決める
+          const row = Math.floor(n / size);
+          const col = n % size;
+          div.style.backgroundPosition = `${-col * 100}px ${-row * 100}px`;
+        }
+
+        div.addEventListener("click", () => moveTile(i));
+        puzzle.appendChild(div);
+      });
+    }
+
+    function moveTile(index) {
+      const emptyRow = Math.floor(emptyIndex / size);
+      const emptyCol = emptyIndex % size;
+      const tileRow = Math.floor(index / size);
+      const tileCol = index % size;
+
+      if (
+        (tileRow === emptyRow && Math.abs(tileCol - emptyCol) === 1) ||
+        (tileCol === emptyCol && Math.abs(tileRow - emptyRow) === 1)
+      ) {
+        [tiles[emptyIndex], tiles[index]] = [tiles[index], tiles[emptyIndex]];
+        emptyIndex = index;
+        moves++;
+        movesEl.textContent = moves;
+        render();
+        checkWin();
+      }
+    }
+
+function checkWin() {
+      for (let i = 0; i < tiles.length; i++) {
+        if (tiles[i] !== i) return false;
+      }
+      clearInterval(timerInterval);
+      messageEl.textContent = "🎉 クリア！";
+
+      // ▼▼▼ ここを追加：空白タイルも元の画像で埋める ▼▼▼
+      const lastTile = puzzle.lastChild; // 最後のタイル（空白）
+      lastTile.classList.remove("empty");
+      lastTile.style.backgroundImage = 'url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPjrLhRe69TZJjGiwaB_qEfk3SLDKTVlDV2yr_vVgZ75tMWx0qa3dV2fHa36hAO-NBfHzs-QzYsQxECl0zTcnQGfgYyPTtd1sXHMEJoMBUF4oSEcC5uJJgfQkOe4hgs7c0aH_QhyphenhyphenpPtrw2MkPBG3FiMkmspkPV77nb-1cmoznS95TUemSiOdYK1-7BJX6i/s1024/Copilot_20250825_095216.png")';
+      lastTile.style.backgroundSize = `${size * 100}px ${size * 100}px`;
+      lastTile.style.backgroundPosition = `${-(size - 1) * 100}px ${-(size - 1) * 100}px`;
+      // ▲▲▲ ここまで追加
+
+      return true;
+}
+
+    function shuffleArray(array) {
+      let shuffled = array.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
