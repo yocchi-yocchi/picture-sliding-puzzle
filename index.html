@@ -113,12 +113,12 @@
       movesEl.textContent = "0";
       messageEl.textContent = "";
      
-      const totalSize = 300; // タイル全体
+      const totalSize = 300;
       const tileSize = totalSize / size;
 
       puzzle.style.gridTemplateColumns = `repeat(${size}, ${tileSize}px)`;
       puzzle.style.gridTemplateRows = `repeat(${size}, ${tileSize}px)`;
-      puzzle.style.width = `${totalSize + 8}px`;   // ← 4px×2 の枠を足す
+      puzzle.style.width = `${totalSize + 8}px`;
       puzzle.style.height = `${totalSize + 8}px`;
 
       tiles = [];
@@ -208,6 +208,7 @@
   </script>
 </body>
 </html>
+
 
 
 
