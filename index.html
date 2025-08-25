@@ -104,7 +104,7 @@
       size = parseInt(e.target.value);
       startGame();
     });
-
+    
     function startGame() {
       clearInterval(timerInterval);
       timer = 0;
@@ -112,14 +112,16 @@
       timerEl.textContent = "0";
       movesEl.textContent = "0";
       messageEl.textContent = "";
-     
-      const totalSize = 300;
+
+      const totalSize = 300; // タイル部分だけの固定サイズ
+      const borderSize = 8;  // 枠線ぶん
       const tileSize = totalSize / size;
 
+      // 枠込みの外寸を設定
       puzzle.style.gridTemplateColumns = `repeat(${size}, ${tileSize}px)`;
       puzzle.style.gridTemplateRows = `repeat(${size}, ${tileSize}px)`;
-      puzzle.style.width = `${totalSize + 8}px`;
-      puzzle.style.height = `${totalSize + 8}px`;
+      puzzle.style.width = `${totalSize + borderSize}px`;
+      puzzle.style.height = `${totalSize + borderSize}px`;
 
       tiles = [];
       for (let i = 0; i < size * size; i++) {
@@ -145,6 +147,8 @@
 
         div.style.width = `${tileSize}px`;
         div.style.height = `${tileSize}px`;
+
+        // 背景は「タイル部分300px基準」で指定
         div.style.backgroundSize = `${totalSize}px ${totalSize}px`;
 
         if (n === size * size - 1) {
@@ -208,6 +212,7 @@
   </script>
 </body>
 </html>
+
 
 
 
