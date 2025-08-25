@@ -85,7 +85,7 @@
     <p>🌀 手数: <span id="moves">0</span></p>
     <p id="message"></p>
   </div>
-
+  
   <script>
     let size = 3;
     let tiles = [];
@@ -173,28 +173,26 @@
         emptyIndex = index;
         moves++;
         movesEl.textContent = moves;
-        render();
+        render(300, 300 / size);
         checkWin();
       }
     }
 
-function checkWin() {
+    function checkWin() {
       for (let i = 0; i < tiles.length; i++) {
         if (tiles[i] !== i) return false;
       }
       clearInterval(timerInterval);
       messageEl.textContent = "🎉 クリア！";
 
-      // ▼▼▼ ここを追加：空白タイルも元の画像で埋める ▼▼▼
-      const lastTile = puzzle.lastChild; // 最後のタイル（空白）
+      const lastTile = puzzle.lastChild;
       lastTile.classList.remove("empty");
-      lastTile.style.backgroundImage = 'url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPjrLhRe69TZJjGiwaB_qEfk3SLDKTVlDV2yr_vVgZ75tMWx0qa3dV2fHa36hAO-NBfHzs-QzYsQxECl0zTcnQGfgYyPTtd1sXHMEJoMBUF4oSEcC5uJJgfQkOe4hgs7c0aH_QhyphenhyphenpPtrw2MkPBG3FiMkmspkPV77nb-1cmoznS95TUemSiOdYK1-7BJX6i/s1024/Copilot_20250825_095216.png")';
-      lastTile.style.backgroundSize = `${size * 100}px ${size * 100}px`;
-      lastTile.style.backgroundPosition = `${-(size - 1) * 100}px ${-(size - 1) * 100}px`;
-      // ▲▲▲ ここまで追加
+      lastTile.style.backgroundImage = 'url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPjrLhRe69TZJjGiwaB_qEfk3SLDKTVlDV2yr_vVgZ75tMWx0qa3dV2fHa36hAO-NBfHzs-QzYsQxECl0zTcnQGfgYyPTtd1sXHMEJoMBUF4oSEcC5uJJgfQkOe4hgs7c0aH_Q--pPtrw2MkPBG3FiMkmspkPV77nb-1cmoznS95TUemSiOdYK1-7BJX6i/s1024/Copilot_20250825_095216.png")';
+      lastTile.style.backgroundSize = `300px 300px`;
+      lastTile.style.backgroundPosition = `${-(size - 1) * (300 / size)}px ${-(size - 1) * (300 / size)}px`;
 
       return true;
-}
+    }
 
     function shuffleArray(array) {
       let shuffled = array.slice();
@@ -209,4 +207,5 @@ function checkWin() {
   </script>
 </body>
 </html>
+
 
