@@ -112,23 +112,23 @@
       movesEl.textContent = "0";
       messageEl.textContent = "";
 
-      puzzle.style.gridTemplateColumns = `repeat(${size}, 100px)`;
-      puzzle.style.gridTemplateRows = `repeat(${size}, 100px)`;
-      puzzle.style.width = `${size * 100}px`;
-      puzzle.style.height = `${size * 100}px`;
+      const totalSize = 300; // パズル全体の固定サイズ
+      const tileSize = totalSize / size;
+
+      puzzle.style.gridTemplateColumns = `repeat(${size}, ${tileSize}px)`;
+      puzzle.style.gridTemplateRows = `repeat(${size}, ${tileSize}px)`;
+      puzzle.style.width = `${totalSize}px`;
+      puzzle.style.height = `${totalSize}px`;
 
       tiles = [];
       for (let i = 0; i < size * size; i++) {
         tiles.push(i);
       }
 
-      // シャッフル
       tiles = shuffleArray(tiles);
-
-      // 最後を空白に
       emptyIndex = tiles.indexOf(size * size - 1);
 
-      render();
+      render(totalSize, tileSize);
 
       timerInterval = setInterval(() => {
         timer++;
@@ -136,28 +136,22 @@
       }, 1000);
     }
 
-    function render() {
+    function render(totalSize, tileSize) {
       puzzle.innerHTML = "";
       tiles.forEach((n, i) => {
         const div = document.createElement("div");
         div.classList.add("tile");
 
-        // タイルの表示サイズ（既存の設計に合わせて100px）
-        div.style.width = "100px";
-        div.style.height = "100px";
-
-        // ▼▼▼ ここを追加（パズル全体の大きさ＝ size*100 px に背景画像を拡大・縮小）
-        div.style.backgroundSize = `${size * 100}px ${size * 100}px`;
-        // ▲▲▲ ここまで追加
+        div.style.width = `${tileSize}px`;
+        div.style.height = `${tileSize}px`;
+        div.style.backgroundSize = `${totalSize}px ${totalSize}px`;
 
         if (n === size * size - 1) {
-          // 空白タイル
           div.classList.add("empty");
         } else {
-          // 画像の切り出し位置を決める
           const row = Math.floor(n / size);
           const col = n % size;
-          div.style.backgroundPosition = `${-col * 100}px ${-row * 100}px`;
+          div.style.backgroundPosition = `${-col * tileSize}px ${-row * tileSize}px`;
         }
 
         div.addEventListener("click", () => moveTile(i));
@@ -215,3 +209,4 @@ function checkWin() {
   </script>
 </body>
 </html>
+
