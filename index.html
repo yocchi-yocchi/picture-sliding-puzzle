@@ -112,14 +112,14 @@
       timerEl.textContent = "0";
       movesEl.textContent = "0";
       messageEl.textContent = "";
-
-      const totalSize = 300; // パズル全体の固定サイズ
+     
+      const totalSize = 300; // タイル全体
       const tileSize = totalSize / size;
 
       puzzle.style.gridTemplateColumns = `repeat(${size}, ${tileSize}px)`;
       puzzle.style.gridTemplateRows = `repeat(${size}, ${tileSize}px)`;
-      puzzle.style.width = `${totalSize}px`;
-      puzzle.style.height = `${totalSize}px`;
+      puzzle.style.width = `${totalSize + 8}px`;   // ← 4px×2 の枠を足す
+      puzzle.style.height = `${totalSize + 8}px`;
 
       tiles = [];
       for (let i = 0; i < size * size; i++) {
@@ -208,6 +208,7 @@
   </script>
 </body>
 </html>
+
 
 
 
